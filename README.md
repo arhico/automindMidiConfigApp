@@ -6,7 +6,7 @@ TODO
 
 Create virtual enviroment with python (tested: 3.11.2, 3.12.2) and install dependencies from requirementsAutomindMidi.txt
 ### Run
-'''automindMidiApp.py'''
+```automindMidiApp.py```
 
 ### Compile binary with cx_Freeze
-'''setup.py build'''
+```setup.py build```
