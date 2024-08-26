@@ -12,7 +12,7 @@ subdirectory that contains the files needed to run the script without Python
 from cx_Freeze import Executable, setup
 
 executables = [Executable(
-    script="./pyConfigApp/AUTOMIND_MIDI_APP.py",
+    script="./automindMidiApp.py",
     base="gui",
     # compress=False,
     # copyDependentFiles=True,
@@ -23,17 +23,17 @@ executables = [Executable(
 
 import datetime
 import platform
-BUILD_COUNTER = 2
+BUILD_COUNTER = 3
 includeFiles = ['./assets/']
 # BUILD = str(datetime.datetime.now()).replace(" ","_")
 # BUILD = BUILD.replace(":", "-")[:19]
 APP_VER = f"0.0.1.{BUILD_COUNTER}"
-APP_NAME = f'AUTOMIND_MIDI_APP_v{APP_VER}'
+APP_NAME = f'automindMidiAppV{APP_VER}'
 
 PLATFORM = platform.system()
 
 build_exe_options = {
-    "build_exe": f'./build_app/{PLATFORM}_{APP_NAME}',
+    "build_exe": f'./build/{PLATFORM}_{APP_NAME}',
     "excludes": ["unittest"],
     # "includes": ["mido", "pygame","rtmidi","tkinter"],
     # "zip_include_packages": ["encodings", "PySide6", "shiboken6"],
