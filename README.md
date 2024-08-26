@@ -3,7 +3,7 @@ Based on pygame-ce it enables Automind MIDI touch controller device based on ESP
 Also acts as universal simple MIDI monitor.
 WARNING! Almost nothing works now, code might be bad. Made public for friends to help with testing and developing
 
-## About MIDI controller0
+## About MIDI controller
 Based on neteork of ESP32S2 SOCs
 TODO
 
