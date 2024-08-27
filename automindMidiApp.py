@@ -7,7 +7,6 @@ import os
 # import subprocess
 # import importlib.util
 
-
 from automindMidiConfig import *
 import automindMidiVisualizer
 from automindMidiVisualizer import gridObjectCreate, rootObjectsContainerClass
