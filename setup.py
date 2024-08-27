@@ -34,7 +34,7 @@ PLATFORM = platform.system()
 
 build_exe_options = {
     "build_exe": f'./build/{APP_NAME}{PLATFORM}Build{BUILD}',
-    "excludes": ["unittest", ],
+    "excludes": ["unittest"],
     # "includes": ["mido", "pygame","rtmidi","tkinter"],
     # "zip_include_packages": ["encodings", "PySide6", "shiboken6"],
     # "zip_include_packages": ["*"],
