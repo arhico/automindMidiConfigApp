@@ -57,7 +57,7 @@ clock = pygame.time.Clock()
 
 BG_COLOR = (5,10,8)
 
-SCREEN_W = 500
+SCREEN_W = 550
 SCREEN_H = 580
 globalText = ["oh, hi mark"]
 
