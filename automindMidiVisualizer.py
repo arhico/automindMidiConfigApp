@@ -127,7 +127,7 @@ class gridPointClass(object):
             #     mult = 50
             # else:
             #     mult = 10
-            pygame.gfxdraw.pixel(self.screen, int(self.screenCoords[0]+offset[0]/2), int(self.screenCoords[1] + offset[1]/2),self.lowpass.update(colorRandom(),0.7))
+            pygame.gfxdraw.pixel(self.screen, int(self.screenCoords[0]+offset[0]/2), int(self.screenCoords[1] + offset[1]/2),self.lowpass.update((colorRandom()),0.95))
     # def lowpass():
         # lp = 
 def getSequentialSensorId():
@@ -318,26 +318,23 @@ class guiLed(rootObject):
         super().__init__(screen=screen, globalText=None, grid=grid, gridTopLeftCoords=gridTopLeftCoords, gridBox=gridBox, font=None, colors=colors, objType=objType)
         self.ledTimeoutFrames = LED_TIMEOUT_FRAMES
         self.updateInternalData()
+        
         # self.ledIsRound = False
     def update(self, changed):
         self.renderLed(changed)
         if changed:
             return False
     def renderLed(self, changed):
-        # return
-        # if not self.ledIsRound:
-        # pygame.draw.rect(self.screen, self.colors[self.changed],(self.screenCoords[0] + self.grid.borderPx[0]*4,self.screenCoords[1] + self.grid.borderPx[1], self.gridSize[0]/2.5,self.gridSize[1]/4))
-        # pygame.gfxdraw.rectangle(self.screen, (self.screenCoords[0] + self.grid.borderPx[0]*4,self.screenCoords[1] + self.grid.borderPx[1], self.gridSize[0]/2.5,self.gridSize[1]/4),self.colors[2])
         if changed == True:
             self.ledTimeoutFrames = LED_TIMEOUT_FRAMES
         if self.ledTimeoutFrames > 0:
             self.ledTimeoutFrames-=1
             clrIdx = 1
+            coeff = 0.05
         else:
             clrIdx = 0
-        pygame.gfxdraw.box(self.screen, (self.screenCoords[0] + self.grid.borderPx[0]*4,self.screenCoords[1] + self.grid.borderPx[1], 1.5 * self.gridSize[0] - (self.screenCoords[0] + self.grid.borderPx[0]*3)*2,2),self.colors[clrIdx])
-            # changed = False
-            # pass
+            coeff = 0.7
+        pygame.gfxdraw.box(self.screen, (self.screenCoords[0]+self.grid.borderPx[0]+BRICKS_OUTLINE_RADIUS_PX+BRICKS_OUTLINE_WIDTH_PX, self.screenCoords[1]+self.grid.borderPx[1], DEFAULT_LED_SIZE_PX[0], DEFAULT_LED_SIZE_PX[1]), self.lowpass.update(self.colors[clrIdx],coeff))
 
 class guiBrickGlobalText(rootObject):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords = None, gridBox = (20, DEFAULT_STATUS_BOX_GRID_H), objType="statusBox") -> None:
@@ -360,7 +357,7 @@ class guiBrickGlobalText(rootObject):
             coloring = self.colors[2]
         
         curColor = self.lowpass.update(coloring,0.6)
-        pygame.draw.rect(self.screen,curColor,rectValue, 2,border_radius=int(self.grid.gridSize[0]/4))
+        pygame.draw.rect(self.screen,curColor,rectValue,BRICKS_OUTLINE_WIDTH_PX,border_radius=BRICKS_OUTLINE_RADIUS_PX)
         if not fill is None:
             if isinstance(fill, float):
                 if fill > 1.0:
@@ -373,13 +370,13 @@ class guiBrickGlobalText(rootObject):
                 scaledFillRect[1] = int(scaledFillRect[1])
                 scaledFillRect[3] *= fill
                 scaledFillRect[3] = int(scaledFillRect[3])
-                pygame.draw.rect(self.screen,curColor,tuple(scaledFillRect), 0, border_radius=int(self.grid.gridSize[0]/6))
+                pygame.draw.rect(self.screen,curColor,tuple(scaledFillRect), 0, border_radius=int(BRICKS_OUTLINE_RADIUS_PX*0.8))
             else:
                 scaledFillRect[0] += fillOffset[0] * 2
                 scaledFillRect[1] += fillOffset[0] * 2
                 scaledFillRect[2] -= 2*fillOffset[0] * 2
                 scaledFillRect[3] -= 2*fillOffset[0] * 2
-                pygame.draw.rect(self.screen,curColor,scaledFillRect, 0, border_radius=int(self.grid.gridSize[0]/6))
+                pygame.draw.rect(self.screen,curColor,scaledFillRect, 0, border_radius=int(BRICKS_OUTLINE_RADIUS_PX*0.8))
         self.changed = self.activityObj[0].update(self.changed)
         textHorLimit = int(self.screenSize[0]/PIXELS_PER_SYMBOL - 1)
         maxHoverCont = 0

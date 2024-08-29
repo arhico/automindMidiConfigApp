@@ -57,7 +57,7 @@ TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotif
 # TEST = gridObjectCreate("guiBrickListInteractive", rootObject, screen, grids, gridBx=(grids.gridDimensions[0]/2,4))
 # rootObject[TEST].text = 42
 # MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickDropListInteractive", rootObject, screen, grids, gridBx=(grids.gridDimensions[0],2))
-MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickListInteractive", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0]-4,6))
+MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickListInteractive", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],6))
 # _ = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(3,6))
 
 MIDI_MONITOR_LIST_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
