@@ -45,13 +45,12 @@ def findPorts(decimateFreq = None):
     return globalMidiPorts
 
 globalMidiMonitor = {}
-globalMidiMonitor = {MIDI_MONITOR_TITLE:["oh, hi mark"]}
+globalMidiMonitor = {MIDI_MONITOR_TITLE:[textFont]}
 globalNotification = {NOTIF_TITLE:[]}
 
 rootObject = []
 
 TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],3))
-# rootObject[TITLE_OBJ_IDX].text = "AUTOMIND:"
 
 # SENSORS_IDX = gridObjectCreate("guiBrickInteractive", rootObject, screen, grids, gridBx=SENSOR_GRIDBOX, gridMapping=SENSOR_GRID_MAPPING)
 # gridObjectCreate("guiBrick",rootObject,screen,grids,(grids.gridDimensions[1] - 2))
@@ -62,6 +61,7 @@ MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickListInteractive", rootObje
 # _ = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(3,6))
 
 MIDI_MONITOR_LIST_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
+DBG_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
 
 # NOTIFICATIONS_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(3)))
 
@@ -117,7 +117,8 @@ while 1:
         
         
         rootObject[MIDI_DEVICES_LIST_OBJ_IDX].text = globalMidiPorts
-        rootObject[MIDI_MONITOR_LIST_OBJ_IDX].text = globalMidiMonitor
+        rootObject[MIDI_MONITOR_LIST_OBJ_IDX].text =  globalMidiMonitor
+        rootObject[DBG_OBJ_IDX].text =  str(int(random()*10e16))
         # rootObject[NOTIFICATIONS_OBJ_IDX].text = globalNotification
         screen.fill(BG_COLOR)
         rootObjectContainer.update(FRAMERATE)
@@ -128,5 +129,6 @@ while 1:
     
 
     cnt+=1
+saveConfig(CONFIG_FILE_NAME,{"textFont":textFont})
 pygame.quit()
 os._exit(0)

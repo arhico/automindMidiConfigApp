@@ -252,7 +252,7 @@ class rootObject(object):
                 for y in range(0,self.gridBox[1]):
                     point = [self.gridTopLeftCoords[0]+x, self.gridTopLeftCoords[1]+y]
                     self.occupiedGridPoints.append(self.grid.grid.pop(tuple(point)))
-                    print(f'{self.type} occupied point {point}')
+                    # print(f'{self.type} occupied point {point}')
         self.screenCenterOffsettedCoords = [int(self.screenCoords[0] + self.screenSize[0]/2), int(self.screenCoords[1] + self.screenSize[1]/2)]
         self.changesDetector()
         if self.active:
@@ -491,8 +491,8 @@ def gridObjectCreate(objectType, objectsList, screen, globalText, gridPointer, g
     if pointsToOccupy is None:
         print(f"Failed to fit! Skipping {objectType} with gridBox {gridBox},")
         return
-    for point in pointsToOccupy:
-        print(f'{objectType}:{point}:{gridPointer.grid[tuple(point)].screenCoords}')
+    # for point in pointsToOccupy:
+    #     print(f'{objectType}:{point}:{gridPointer.grid[tuple(point)].screenCoords}')
     for gridCoordinates in pointsToOccupy:
         match objectType:
             case "guiBrickDropListInteractive":

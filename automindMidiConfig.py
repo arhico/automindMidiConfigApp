@@ -1,5 +1,16 @@
 from random import random
+import os
+import json
+from os import walk
+import pygame
+import pygame.freetype 
 
+def saveConfig(file, config):
+    # config["textFont"] += 1
+    with open(file, 'w') as f:
+        json.dump(config, f)
+    print(f"Saved config: {config}")
+    
 def colorRandom(alpha = None):
     if alpha is None:
         return (int(255*random()),int(255*random()),int(255*random()))
@@ -32,24 +43,46 @@ def infoPrint(notificatord, inputData):
     # global globalNotification
     print(inputData)
     notificatord = inputData
-
-import pygame
-import pygame.freetype    
+   
 pygame.init()
-icon = pygame.image.load('./assets/automindMidiIcon.png')
+ASSETS_PATH = './assets/'
+FONTS_PATH = ASSETS_PATH + 'fonts/'
+icon = pygame.image.load(f'{ASSETS_PATH}automindMidiIcon.png')
+CONFIG_FILE_NAME = "automindAppConfig.json"
 pygame.display.set_icon(icon)
 pygame.font.init()
 TEXT_BRIGHTNESS = 0.95
 TEXT_ALPHA = 0.8
-TEXT_SIZE = int(12)
-# TEXT_FAMILY = 'Consolas'
-TEXT_FAMILY = './assets/JupiteroidLight.ttf'
+DEFAULT_TEXT_SIZE = int(14)
+
+textFont = 0
+
+try:
+    with open(CONFIG_FILE_NAME, 'r') as f:
+        config = json.load(f)
+        # textFont = int(config["textFont"])
+        print(f"Loaded config: {config}")
+except:
+    print("No config file found. Creating one")
+    saveConfig(CONFIG_FILE_NAME, {"textFont":textFont})
+
+# print(filenames)
+
+TEXT_FAMILY = f'{FONTS_PATH}bedstead-condensed.otf'
 
 # TEXT_FAMILY = 'Courier New'
 # TEXT_FAMILY = 'Fixed Sys'
 # TEXT_FAMILY = 'Mono'
-pygame.display.set_caption("AUTOMIND MIDI CONFIGURATOR")
-globalFont = pygame.freetype.Font(TEXT_FAMILY, TEXT_SIZE, resolution=96)
+pygame.display.set_caption("Automind MIDI Configurator")
+# globalFont = None
+
+def globalFontUpdate(fontFile, fontResolution=None):
+    return pygame.freetype.Font(fontFile, size=DEFAULT_TEXT_SIZE)
+
+# filenames = next(walk(FONTS_PATH), (None, None, []))[2]  # [] if no file
+
+globalFont = globalFontUpdate(TEXT_FAMILY)
+
 clock = pygame.time.Clock()
 
 # globalFont.render_to()
@@ -60,7 +93,7 @@ SCREEN_W = 550
 SCREEN_H = 580
 globalText = ["oh, hi mark"]
 
-PIXELS_PER_SYMBOL = TEXT_SIZE/12 * 100/12
+PIXELS_PER_SYMBOL = DEFAULT_TEXT_SIZE/12 * 100/12
 
 RENDER_GRID = False
 RENDER_FREE_CELLS = False
