@@ -1,11 +1,5 @@
 import time
 import os
-<<<<<<< HEAD
-# import colorsys
-# import subprocess
-# import importlib.util
-=======
->>>>>>> 7412182 (smol cln)
 
 from automindMidiConfig import *
 import automindMidiVisualizer

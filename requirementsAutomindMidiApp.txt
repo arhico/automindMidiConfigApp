@@ -24,4 +24,5 @@ six==1.16.0
 # virtualenv==20.26.3
 cx_Freeze==7.2.0
 patchelf==0.17.2.1
+# pyinstaller==6.10.0
 
