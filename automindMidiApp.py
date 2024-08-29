@@ -31,13 +31,14 @@ findPportsSamplesCount = 0
 MIDI_MONITOR_TITLE = "midi monitor"
 MIDI_DEVICES_LIST_TITLE = "midi devices"
 def findPorts(decimateFreq = None):
-    global globalMidiPorts,findPportsSamplesCount
+    global globalMidiPorts,findPportsSamplesCount,timeRunning
     if not decimateFreq is None:
         findPportsSamplesCount+=1
         if findPportsSamplesCount % decimateFreq:
             return
         else:
             findPportsSamplesCount = 0
+    timeRunning = int((time.time()-START_TIME)*1000)
     temp = mido.get_input_names()
     globalMidiPorts[MIDI_DEVICES_LIST_TITLE] = temp
     # print(f'{str(globalMidiPorts)}')
@@ -112,23 +113,17 @@ while 1:
         if not rootObject[TITLE_OBJ_IDX].changed and not cnt % (LED_TIMEOUT_FRAMES * 2):
             rootObject[TITLE_OBJ_IDX].changed = True
             cnt = 0
-        
         rootObject[TITLE_OBJ_IDX].text = globalNotification
-        
-        
         rootObject[MIDI_DEVICES_LIST_OBJ_IDX].text = globalMidiPorts
-        rootObject[MIDI_MONITOR_LIST_OBJ_IDX].text =  globalMidiMonitor
-        rootObject[DBG_OBJ_IDX].text =  str(int(random()*10e16))
+        rootObject[MIDI_MONITOR_LIST_OBJ_IDX].text =  globalMidiMonitor        
+        rootObject[DBG_OBJ_IDX].text =  timeRunning
         # rootObject[NOTIFICATIONS_OBJ_IDX].text = globalNotification
         screen.fill(BG_COLOR)
         rootObjectContainer.update(FRAMERATE)
     except:
         break
-
-    # print(globalNotification)
-    
-
     cnt+=1
-saveConfig(CONFIG_FILE_NAME,{"textFont":textFont})
+        # config = 
+saveConfig(CONFIG_FILE_NAME,{"timeRunning":timeRunning, "textFont":textFont})
 pygame.quit()
 os._exit(0)

@@ -4,12 +4,35 @@ import json
 from os import walk
 import pygame
 import pygame.freetype 
+import time
+textFont = 0
+timeRunning = 0
+START_TIME = time.time()
 
-def saveConfig(file, config):
-    # config["textFont"] += 1
+def saveConfig(file, config = None):
+    global timeRunning, textFont
+    if config is None:
+        config = {"timeRunning":timeRunning, "textFont":textFont}
     with open(file, 'w') as f:
         json.dump(config, f)
     print(f"Saved config: {config}")
+    
+def configLoad(file):
+    global START_TIME, timeRunning, textFont
+    try:
+        with open(file, 'r') as f:
+            config = json.load(f)
+            # textFont = int(config["textFont"])
+            prop = "timeRunning"
+            try:
+                START_TIME -= int(config[prop])/1000
+            except:
+                print(f"Failed to find property {prop} in {file}")
+            print(f"Loaded config: {config}")
+    except:
+        print("No config file found. Creating one")
+        saveConfig(file, {"textFont":textFont})
+
     
 def colorRandom(alpha = None):
     if alpha is None:
@@ -53,18 +76,9 @@ pygame.display.set_icon(icon)
 pygame.font.init()
 TEXT_BRIGHTNESS = 0.95
 TEXT_ALPHA = 0.8
-DEFAULT_TEXT_SIZE = int(14)
+DEFAULT_TEXT_SIZE = int(16)
 
-textFont = 0
-
-try:
-    with open(CONFIG_FILE_NAME, 'r') as f:
-        config = json.load(f)
-        # textFont = int(config["textFont"])
-        print(f"Loaded config: {config}")
-except:
-    print("No config file found. Creating one")
-    saveConfig(CONFIG_FILE_NAME, {"textFont":textFont})
+configLoad(CONFIG_FILE_NAME)
 
 # print(filenames)
 
@@ -93,13 +107,13 @@ SCREEN_W = 550
 SCREEN_H = 580
 globalText = ["oh, hi mark"]
 
-PIXELS_PER_SYMBOL = DEFAULT_TEXT_SIZE/12 * 100/12
+PIXELS_PER_SYMBOL = DEFAULT_TEXT_SIZE/12 * 80/12
 
 RENDER_GRID = False
-RENDER_FREE_CELLS = False
+RENDER_FREE_CELLS = True
 RENDER_FREE_CELLS_PIXELS_AT_CENTER = True
 GRID_COLOR = (150,150,150,30)
-GRID_SIZE_PX_X = 21
+GRID_SIZE_PX_X = 19
 GRID_SIZE_PX_Y = GRID_SIZE_PX_X
 # GRID_STEP_PX_Y = 50
 GRID_CELL_BORDER_PX = (2,2)
@@ -145,7 +159,7 @@ DEFAULT_STATUS_BOX_GRID_H = 4
 
 # DEFAULT_TEXT_COLOR = (colorMult(DEFAULT_FADER_BODY_COLOR,DEFAULT_HOVER_COLOR_MULTS))
 
-FRAMERATE = 40
+FRAMERATE = 60
 
 SENSORSAPPING = [
   [0, 3, 6, 9, 12, 15, 18, 21],

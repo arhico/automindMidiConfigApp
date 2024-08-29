@@ -152,9 +152,6 @@ class lowpassAssymetrical(object):
             self.filteredValue[value] = coeffitient * self.filteredValue[value] + (1-coeffitient) * inValue[value]
         return self.filteredValue
 
-import time
-START_TIME = time.time()
-
 class rootObject(object):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords, gridBox, font, colors, objType = None):
         super().__init__()
