@@ -28,8 +28,8 @@ grids.setPygameSurface(screen)
 globalMidiPorts = {}
 
 findPportsSamplesCount = 0
-MIDI_MONITOR_TITLE = "MIDI monitor"
-MIDI_DEVICES_LIST_TITLE = "MIDI devices"
+MIDI_MONITOR_TITLE = "midi monitor"
+MIDI_DEVICES_LIST_TITLE = "midi devices"
 def findPorts(decimateFreq = None):
     global globalMidiPorts,findPportsSamplesCount
     if not decimateFreq is None:
@@ -45,8 +45,7 @@ def findPorts(decimateFreq = None):
     return globalMidiPorts
 
 globalMidiMonitor = {}
-globalMidiMonitor[MIDI_MONITOR_TITLE]= ["oh, hi mark"]
-from automindMidiConfig import NOTIF_TITLE
+globalMidiMonitor = {MIDI_MONITOR_TITLE:["oh, hi mark"]}
 globalNotification = {NOTIF_TITLE:[]}
 
 rootObject = []
