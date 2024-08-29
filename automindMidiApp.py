@@ -51,8 +51,8 @@ globalNotification = {NOTIF_TITLE:[]}
 
 rootObject = []
 
-TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],2))
-rootObject[TITLE_OBJ_IDX].text = "AUTOMIND:"
+TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],3))
+# rootObject[TITLE_OBJ_IDX].text = "AUTOMIND:"
 
 # SENSORS_IDX = gridObjectCreate("guiBrickInteractive", rootObject, screen, grids, gridBx=SENSOR_GRIDBOX, gridMapping=SENSOR_GRID_MAPPING)
 # gridObjectCreate("guiBrick",rootObject,screen,grids,(grids.gridDimensions[1] - 2))
@@ -114,7 +114,7 @@ while 1:
             rootObject[TITLE_OBJ_IDX].changed = True
             cnt = 0
         
-        rootObject[TITLE_OBJ_IDX].text = f"AUTOMIND: {globalNotification}"
+        rootObject[TITLE_OBJ_IDX].text = globalNotification
         
         
         rootObject[MIDI_DEVICES_LIST_OBJ_IDX].text = globalMidiPorts

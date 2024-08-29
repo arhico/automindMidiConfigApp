@@ -26,7 +26,7 @@ def colorInvert(color):
 
 guiBricksNames = ["guiBrick", "guiBrickList", "guiBrickInfo", "guiBrickListInteractive", "guiBrickDropListInteractive"]
 
-NOTIF_TITLE = "Info"
+NOTIF_TITLE = "automind"
 
 def infoPrint(notificatord, inputData):
     # global globalNotification

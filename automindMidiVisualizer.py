@@ -337,7 +337,7 @@ class guiLed(rootObject):
             clrIdx = 1
         else:
             clrIdx = 0
-        pygame.gfxdraw.box(self.screen, (self.screenCoords[0] + self.grid.borderPx[0]*4,self.screenCoords[1] + self.grid.borderPx[1], self.gridBox[0] * self.gridSize[0] - (self.screenCoords[0] + self.grid.borderPx[0]*4)*2,2),self.colors[clrIdx])
+        pygame.gfxdraw.box(self.screen, (self.screenCoords[0] + self.grid.borderPx[0]*4,self.screenCoords[1] + self.grid.borderPx[1], 1.5 * self.gridSize[0] - (self.screenCoords[0] + self.grid.borderPx[0]*3)*2,2),self.colors[clrIdx])
             # changed = False
             # pass
 
