@@ -212,52 +212,38 @@ class rootObject(object):
             return
         selectionChanged = listChanged = False
         
-        if not str(self.text) in str(self.hashPrevious):
-            self.changed = True
-            self.hashPrevious = str(self.text)
-            listChanged = True
+        curName = ""
+        try:
+            curName = str(list(self.text.keys()))
+        except:
+            pass
+            # try:
+            #     curName = self.text[0]
+            # except:
+            #     curName = self.type
         
-        if self.selected!=self.selectedPrev:
+        if str(self.text) != str(self.hashPrevious) and self.type != "guiBrickInfo":
+            self.changed = True
+            listChanged = True
+            self.hashPrevious = str(self.text)
+        
+        if self.selected != self.selectedPrev:
             selectionChanged = True
             self.changed = True
             self.selectedPrev = self.selected.copy()
 
         if listChanged:
-            globalTextEmpty = {}
-            # self.globalText = globalTextEmpty.copy
-            # self.globalText =f"{self.type} list changed {time.time()}"
-            # self.changed = False
-            # print("list changed")
-            # self.hashPrevious = self.text.copy()
+            if curName in guiBricksNames:
+                self.globalText[NOTIF_TITLE]=[f"Initialized, time: {round((time.time()-START_TIME)*1000)} ms"]
+            else:
+                self.globalText[NOTIF_TITLE]=[f"{curName} list changed, time: {round((time.time()-START_TIME)*1000)} ms"]
 
-            pass
         if selectionChanged:
-            curName=""
-            try:
-                curName = list(self.text.keys())
-                # print(self)
-            except:
-                try:
-                    curName = self.text[0]
-                except:
-                    curName = self.type
-            self.globalText[NOTIF_TITLE]=[f"{curName} selection changed, time: {round((time.time()-START_TIME)*1000)} ms"]
-            # print(self.globalText, " selection changed")
-        # if 1:
-            # try: # try to select previously selected if list changes
-            #     if self.selected[1] != self.selectedPrev[1]: # actual list changed
-            #         print("List changed")
-            #         if self.selectedPrev[1][self.selectedPrev[0]] in self.selected[1]:
-            #             newIdx = self.selected[1].index(self.selectedPrev[1][self.selectedPrev[0]])
-            #             self.selected[0] = newIdx
-            #             infoPrint(self.globalText,"changed, current device selected")
-            #         else:
-            #             self.selected[0] = 0
-            # except:
-            #     infoPrint(self.globalText,"Failed to select previous device.")
-            # self.selectedPrev = self.selected.copy()
-            # self.changed = True
-            # print(self.changed)
+            if curName in guiBricksNames:
+                self.globalText[NOTIF_TITLE]=[f"Initialized, time: {round((time.time()-START_TIME)*1000)} ms"]
+            else:
+                self.globalText[NOTIF_TITLE]=[f"{curName} selection changed, time: {round((time.time()-START_TIME)*1000)} ms"]
+
     def updateInternalData(self):
         self.screenCoords = [self.gridTopLeftCoords[0] * self.grid.gridSize[0], self.gridTopLeftCoords[1] * self.grid.gridSize[1]]
         if self.occupiedGridPoints.__len__() == 0 and self.doesOccupyGridPoints == True:
@@ -514,6 +500,8 @@ def gridObjectCreate(objectType, objectsList, screen, globalText, gridPointer, g
                 
             case "guiBrickList":
                 objectsList.append(guiBrickList(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox))
+            case "guiBrickInfo":
+                objectsList.append(guiBrickList(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox, objType="guiBrickInfo"))
             case "guiBrickListInteractive":
                 objectsList.append(guiBrickListInteractive(screen,globalText, gridPointer, gridCoordinates, gridBox=gridBox))
             case "guiBrickInteractive":

@@ -28,8 +28,8 @@ grids.setPygameSurface(screen)
 globalMidiPorts = {}
 
 findPportsSamplesCount = 0
-MIDI_MONITOR_TITLE = "MIDI monitor:"
-MIDI_DEVICES_LIST_TITLE = "MIDI devices:"
+MIDI_MONITOR_TITLE = "MIDI monitor"
+MIDI_DEVICES_LIST_TITLE = "MIDI devices"
 def findPorts(decimateFreq = None):
     global globalMidiPorts,findPportsSamplesCount
     if not decimateFreq is None:
@@ -51,7 +51,7 @@ globalNotification = {NOTIF_TITLE:[]}
 
 rootObject = []
 
-TITLE_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],2))
+TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],2))
 rootObject[TITLE_OBJ_IDX].text = "AUTOMIND:"
 
 # SENSORS_IDX = gridObjectCreate("guiBrickInteractive", rootObject, screen, grids, gridBx=SENSOR_GRIDBOX, gridMapping=SENSOR_GRID_MAPPING)

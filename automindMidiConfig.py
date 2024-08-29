@@ -24,9 +24,9 @@ def colorMult(color, mult = None):
 def colorInvert(color):
     return colorMult(color, (-1,-1,-1))
 
-guiBricksNames = ["guiBrick", "guiBrickList", "guiBrickListInteractive", "guiBrickDropListInteractive"]
+guiBricksNames = ["guiBrick", "guiBrickList", "guiBrickInfo", "guiBrickListInteractive", "guiBrickDropListInteractive"]
 
-NOTIF_TITLE = "Info:"
+NOTIF_TITLE = "Info"
 
 def infoPrint(notificatord, inputData):
     # global globalNotification
