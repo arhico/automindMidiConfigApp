@@ -38,7 +38,6 @@ def findPorts(decimateFreq = None):
             return
         else:
             findPportsSamplesCount = 0
-    timeRunning = int((time.time()-START_TIME)*1000)
     temp = mido.get_input_names()
     globalMidiPorts[MIDI_DEVICES_LIST_TITLE] = temp
     # print(f'{str(globalMidiPorts)}')
@@ -112,8 +111,11 @@ while 1:
         findPorts(FRAMERATE/5)
         if not rootObject[TITLE_OBJ_IDX].changed and not cnt % (LED_TIMEOUT_FRAMES * 2):
             rootObject[TITLE_OBJ_IDX].changed = True
+            timeRunning = int((time.time()-START_TIME)*1000)
             cnt = 0
-        rootObject[TITLE_OBJ_IDX].text = globalNotification
+        # modNotif = {}
+        modNotif = {str(NOTIF_TITLE+' '+str(timeRunning)):globalNotification[NOTIF_TITLE]}
+        rootObject[TITLE_OBJ_IDX].text = modNotif
         rootObject[MIDI_DEVICES_LIST_OBJ_IDX].text = globalMidiPorts
         rootObject[MIDI_MONITOR_LIST_OBJ_IDX].text =  globalMidiMonitor        
         rootObject[DBG_OBJ_IDX].text =  timeRunning

@@ -115,6 +115,7 @@ class gridPointClass(object):
         self.screenCoords = coordsRounder
         self.index = indexes
         self.occupied = False
+        self.lowpass = lowpassAssymetrical()
     def renderPoint(self):
         if RENDER_FREE_CELLS_PIXELS_AT_CENTER:
             offset = [self.gridSize[0], self.gridSize[1]]
@@ -126,8 +127,9 @@ class gridPointClass(object):
             #     mult = 50
             # else:
             #     mult = 10
-            pygame.gfxdraw.pixel(self.screen, int(self.screenCoords[0]+offset[0]/2), int(self.screenCoords[1] + offset[1]/2),(0,int(colorRandom()[0]/1.2),0))
-
+            pygame.gfxdraw.pixel(self.screen, int(self.screenCoords[0]+offset[0]/2), int(self.screenCoords[1] + offset[1]/2),self.lowpass.update(colorRandom(),0.7))
+    # def lowpass():
+        # lp = 
 def getSequentialSensorId():
     global privateAutomindTouchSensorCounter
     privateAutomindTouchSensorCounter += 1
@@ -145,8 +147,7 @@ def calcDistance(coord1, coord2):
 
 class lowpassAssymetrical(object):
     def __init__(self) -> None:
-        self.filteredValue = [0,0,0]
-        
+        self.filteredValue = [0,0,0]     
     def update(self, inValue, coeffitient = 0.99):
         for value in range(inValue.__len__()):
             self.filteredValue[value] = coeffitient * self.filteredValue[value] + (1-coeffitient) * inValue[value]
@@ -231,15 +232,15 @@ class rootObject(object):
 
         if listChanged:
             if curName in guiBricksNames:
-                self.globalText[NOTIF_TITLE]=[f"Initialized, time: {round((time.time()-START_TIME)*1000)} ms"]
+                self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: Initialized"]
             else:
-                self.globalText[NOTIF_TITLE]=[f"{curName} list changed, time: {round((time.time()-START_TIME)*1000)} ms"]
+                self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: {curName} list changed"]
 
         if selectionChanged:
             if curName in guiBricksNames:
-                self.globalText[NOTIF_TITLE]=[f"Initialized, time: {round((time.time()-START_TIME)*1000)} ms"]
+                self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: Initialized"]
             else:
-                self.globalText[NOTIF_TITLE]=[f"{curName} selection changed, time: {round((time.time()-START_TIME)*1000)} ms"]
+                self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: {curName} selection changed"]
 
     def updateInternalData(self):
         self.screenCoords = [self.gridTopLeftCoords[0] * self.grid.gridSize[0], self.gridTopLeftCoords[1] * self.grid.gridSize[1]]
