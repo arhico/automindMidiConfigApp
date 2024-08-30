@@ -147,10 +147,26 @@ def calcDistance(coord1, coord2):
 
 class lowpassAssymetrical(object):
     def __init__(self) -> None:
-        self.filteredValue = [0,0,0]     
+        self.filteredValue = [0.0,0.0,0.0]     
     def update(self, inValue, coeffitient = 0.99):
+        distance = [1,1,1]
         for value in range(inValue.__len__()):
-            self.filteredValue[value] = coeffitient * self.filteredValue[value] + (1-coeffitient) * inValue[value]
+            try:
+                distance[value] = inValue[value] / self.filteredValue[value]
+            except:
+                try:
+                    distance[value] = self.filteredValue[value]/inValue[value]
+                except:
+                    pass
+                pass
+            # how far we are from target value
+            distance[value] = 1 - distance[value]
+            if distance[value] < 0:
+                distance[value] = 0
+            modCoeffitient = coeffitient + distance[value]/1.65
+            if modCoeffitient > 0.999:
+                modCoeffitient = 0.999
+            self.filteredValue[value] = modCoeffitient * self.filteredValue[value] + (1-modCoeffitient) * inValue[value]
         return self.filteredValue
 
 class rootObject(object):
@@ -330,10 +346,10 @@ class guiLed(rootObject):
         if self.ledTimeoutFrames > 0:
             self.ledTimeoutFrames-=1
             clrIdx = 1
-            coeff = 0.05
+            coeff = 0.08
         else:
             clrIdx = 0
-            coeff = 0.7
+            coeff = 0.36
         pygame.gfxdraw.box(self.screen, (self.screenCoords[0]+self.grid.borderPx[0]+BRICKS_OUTLINE_RADIUS_PX+BRICKS_OUTLINE_WIDTH_PX, self.screenCoords[1]+self.grid.borderPx[1], DEFAULT_LED_SIZE_PX[0], DEFAULT_LED_SIZE_PX[1]), self.lowpass.update(self.colors[clrIdx],coeff))
 
 class guiBrickGlobalText(rootObject):

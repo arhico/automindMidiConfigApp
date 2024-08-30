@@ -76,7 +76,7 @@ pygame.display.set_icon(icon)
 pygame.font.init()
 TEXT_BRIGHTNESS = 0.95
 TEXT_ALPHA = 0.8
-DEFAULT_TEXT_SIZE = int(16)
+DEFAULT_TEXT_SIZE = int(18)
 
 configLoad(CONFIG_FILE_NAME)
 
@@ -95,7 +95,7 @@ globalFont = globalFontUpdate(TEXT_FAMILY)
 
 clock = pygame.time.Clock()
 
-BG_COLOR = (10,10,8)
+BG_COLOR = (20,15,10)
 
 SCREEN_W = 550
 SCREEN_H = 580
@@ -107,7 +107,7 @@ RENDER_GRID = False
 RENDER_FREE_CELLS = False
 RENDER_FREE_CELLS_PIXELS_AT_CENTER = True
 GRID_COLOR = (150,150,150,30)
-GRID_SIZE_PX_X = 19
+GRID_SIZE_PX_X = 22
 GRID_SIZE_PX_Y = GRID_SIZE_PX_X
 # GRID_STEP_PX_Y = 50
 GRID_CELL_BORDER_PX = (2,2)
