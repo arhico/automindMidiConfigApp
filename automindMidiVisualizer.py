@@ -148,8 +148,9 @@ def calcDistance(coord1, coord2):
 class lowpassAssymetrical(object):
     def __init__(self) -> None:
         self.filteredValue = [0.0,0.0,0.0]     
-    def update(self, inValue, coeffitient = 0.99):
+    def update(self, inValue, coeffitient = 0.999):
         distance = [1,1,1]
+        modCoeffitient = coeffitient
         for value in range(inValue.__len__()):
             try:
                 distance[value] = inValue[value] / self.filteredValue[value]
@@ -163,9 +164,9 @@ class lowpassAssymetrical(object):
             distance[value] = 1 - distance[value]
             if distance[value] < 0:
                 distance[value] = 0
-            modCoeffitient = coeffitient + distance[value]/1.65
-            if modCoeffitient > 0.999:
-                modCoeffitient = 0.999
+            modCoeffitient += distance[value]/2.2
+            if modCoeffitient > 0.997:
+                modCoeffitient = 0.997
             self.filteredValue[value] = modCoeffitient * self.filteredValue[value] + (1-modCoeffitient) * inValue[value]
         return self.filteredValue
 
@@ -201,7 +202,7 @@ class rootObject(object):
         self.rangeBounds = DEFAULT_RANGE_BOUNDS
         self.hover = None
         self.changed = False
-        self.text = []
+        self.text = [self.type]
         self.activeToggle = False
         self.font = font
         self.globalText = globalText
@@ -211,7 +212,7 @@ class rootObject(object):
         self.gridBox = gridBox
         self.screenSize = [(self.gridBox[0]) * self.gridSize[0], (self.gridBox[1]) * self.gridSize[1]]
         self.colors = colors
-        self.highlightColorMults = DEFAULT_HOVER_COLOR_MULTS
+        self.highlightColorMults = HOVER_COLOR_MULTS
         self.demo = False
         self.activationJustStartedHelperBool = False
         self.lowpass = lowpassAssymetrical()
@@ -329,7 +330,7 @@ class rootObject(object):
 # STATUS BOX, SETTINGS ON RIGHT MOUSE CLICK, CHECKBOX, MENU ITEM, DROPLIST
 
 class guiLed(rootObject):
-    def __init__(self, screen, grid, gridTopLeftCoords, gridBox=MINIMUM_GRIDBOX, colors = DEFAULT_LED_COLORS, objType="guiLed"):
+    def __init__(self, screen, grid, gridTopLeftCoords, gridBox=MINIMUM_GRIDBOX, colors = LED_COLORS, objType="guiLed"):
         self.doesOccupyGridPoints = False
         super().__init__(screen=screen, globalText=None, grid=grid, gridTopLeftCoords=gridTopLeftCoords, gridBox=gridBox, font=None, colors=colors, objType=objType)
         self.ledTimeoutFrames = LED_TIMEOUT_FRAMES
@@ -346,16 +347,15 @@ class guiLed(rootObject):
         if self.ledTimeoutFrames > 0:
             self.ledTimeoutFrames-=1
             clrIdx = 1
-            coeff = 0.08
+            coeff = 0.01
         else:
             clrIdx = 0
-            coeff = 0.36
-        pygame.gfxdraw.box(self.screen, (self.screenCoords[0]+self.grid.borderPx[0]+BRICKS_OUTLINE_RADIUS_PX+BRICKS_OUTLINE_WIDTH_PX, self.screenCoords[1]+self.grid.borderPx[1], DEFAULT_LED_SIZE_PX[0], DEFAULT_LED_SIZE_PX[1]), self.lowpass.update(self.colors[clrIdx],coeff))
+            coeff = 0.2
+        pygame.gfxdraw.box(self.screen, (self.screenCoords[0]+self.grid.borderPx[0]+BRICKS_OUTLINE_RADIUS_PX+BRICKS_OUTLINE_WIDTH_PX, self.screenCoords[1]+self.grid.borderPx[1], LED_SIZE_PX[0], LED_SIZE_PX[1]), self.lowpass.update(self.colors[clrIdx],coeff))
 
 class guiBrickGlobalText(rootObject):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords = None, gridBox = (20, DEFAULT_STATUS_BOX_GRID_H), objType="statusBox") -> None:
         super().__init__(screen,globalText, grid, gridTopLeftCoords, gridBox, globalFont, DEFAULT_COLORS, objType=objType)
-        # self.curColor = (DEFAULT_SENSOR_COLOR)
         self.activityObj.append(guiLed(self.screen, grid=self.grid, gridBox=(gridBox[0]/12, 1), gridTopLeftCoords=(self.gridTopLeftCoords[0],self.gridTopLeftCoords[1])))
     def update(self):
         self.updateInternalData()
@@ -371,7 +371,6 @@ class guiBrickGlobalText(rootObject):
                 coloring = self.colors[0]
         else:
             coloring = self.colors[2]
-        
         curColor = self.lowpass.update(coloring,0.6)
         pygame.draw.rect(self.screen,curColor,rectValue,BRICKS_OUTLINE_WIDTH_PX,border_radius=BRICKS_OUTLINE_RADIUS_PX)
         if not fill is None:
@@ -431,9 +430,7 @@ class guiBrickGlobalText(rootObject):
                         self.font.render_to(self.screen, (rectValue[0] + int(self.grid.gridSize[0]/3),rectValue[1] + int(self.grid.gridSize[1] * cnt) + int(self.grid.gridSize[1]/3)), str(text[cnt]), colorInvert(BG_COLOR))
                         cnt+=1
                     return
-                # if isinstance(text, str):
                 self.font.render_to(self.screen, (rectValue[0] + int(self.grid.gridSize[0]/3),rectValue[1] + int(self.grid.gridSize[1] * cnt) + int(self.grid.gridSize[1]/3)), str(self.text), colorInvert(BG_COLOR))
-                    # return
         if self.type == "guiBrickDropListInteractive":
             if isinstance(text, dict):
                 if self.text.keys().__len__():
@@ -456,6 +453,13 @@ class guiBrickList(guiBrickGlobalText):
         self.updateInternalData()
         self.renderStatusBox(self.text)
 
+class guiBrickInteractive(guiBrickList):
+    def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickInteractive") -> None:
+        super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
+        self.interactive = True
+    def update(self):
+        self.mouseInteractionSolver(receiveDataFrom=self.value,sendDataTo=self.globalText)
+
 class guiBrickListInteractive(guiBrickList):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickListInteractive") -> None:
         super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
@@ -470,17 +474,13 @@ class guiBrickDropListInteractive(guiBrickListInteractive):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickDropListInteractive") -> None:
         super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
         self.maxDropListLen = self.grid.gridDimensions[1] - self.gridTopLeftCoords[1] - 1
+        self.scrollable = False
         # print(self.maxDropListLen)
-
-class guiBrickInteractive(guiBrickList):
-    def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickInteractive") -> None:
+ 
+class guiBrickDropListInteractiveScrollable(guiBrickDropListInteractive):
+    def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickDropListInteractiveScrollable") -> None:
         super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
-        # self.colors = [DEFAULT_SENSOR_COLOR]
-        self.interactive = True
-    def update(self):
-        # self.updateInternalData()
-        self.mouseInteractionSolver(receiveDataFrom=self.value,sendDataTo=self.globalText)
-        # self.renderStatusBox(self.text, True)
+        self.scrollable = True
 
 # class guiBrickInteractiveFader(guiBrickInteractive):
 #     def __init__(self, screen, grid, gridTopLeftCoords=None, gridBox=FADER_GRIDBOX, objType="guiBrickInteractiveFader") -> None:
@@ -506,6 +506,8 @@ def gridObjectCreate(objectType, objectsList, screen, globalText, gridPointer, g
     #     print(f'{objectType}:{point}:{gridPointer.grid[tuple(point)].screenCoords}')
     for gridCoordinates in pointsToOccupy:
         match objectType:
+            case "guiBrickDropListInteractiveScrollable":
+                objectsList.append(guiBrickDropListInteractiveScrollable(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox))
             case "guiBrickDropListInteractive":
                 objectsList.append(guiBrickDropListInteractive(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox))
                 

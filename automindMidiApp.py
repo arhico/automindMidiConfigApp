@@ -61,7 +61,7 @@ MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickListInteractive", rootObje
 # _ = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(3,6))
 
 MIDI_MONITOR_LIST_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
-# DBG_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
+DBG_OBJ_IDX = gridObjectCreate("guiBrickDropListInteractiveScrollable", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
 
 # NOTIFICATIONS_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(3)))
 
