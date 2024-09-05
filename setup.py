@@ -5,13 +5,13 @@ from automindMidiConfig import APP_NAME_SNAKE, APP_VER, APP_NAME
 
 
 executables = [Executable(
-    script="./automindMidiApp.py",
+    script=f"./{APP_NAME_SNAKE}.py",
     base="gui",
     # compress=False,
     # copyDependentFiles=True,
     # appendScriptToExe=True,
     # appendScriptToLibrary=False,
-    icon="./assets/automindMidiIcon"
+    icon=f"./assets/{APP_NAME_SNAKE}Icon"
     )]
 
 # BUILD_COUNTER = 3
@@ -20,7 +20,7 @@ BUILD = "Build" + str(datetime.datetime.now()).replace(" ","").replace("-", "").
 PLATFORM = platform.system()
 
 build_exe_options = {
-    "build_exe": f'./build/{APP_NAME_SNAKE}V{APP_VER}{PLATFORM}Build{BUILD}',
+    "build_exe": f'./build/{APP_NAME_SNAKE}V{APP_VER}{PLATFORM}{BUILD}',
     "excludes": ["unittest"],
     # "includes": ["mido", "pygame","rtmidi","tkinter"],
     # "zip_include_packages": ["encodings", "PySide6", "shiboken6"],
