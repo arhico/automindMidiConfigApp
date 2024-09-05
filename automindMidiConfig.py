@@ -3,14 +3,14 @@ import pygame
 import pygame.freetype 
 
 NOTIF_TITLE = "automind"
-APP_VER = f"0.0.1.4"
+APP_VER = "0.0.1.4"
 APP_NAME = "Automind MIDI Configurator"
 APP_NAME_SNAKE = "automindMidiApp"
 
 pygame.init()
 ASSETS_PATH = './assets/'
 FONTS_PATH = ASSETS_PATH + 'fonts/'
-icon = pygame.image.load(f'{ASSETS_PATH}automindMidiIcon.png')
+icon = pygame.image.load(f'{ASSETS_PATH}{APP_NAME_SNAKE}Icon.png')
 CONFIG_FILE_NAME = "automindAppConfig.json"
 pygame.display.set_icon(icon)
 pygame.font.init()
