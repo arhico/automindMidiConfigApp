@@ -1,35 +1,28 @@
-import time
 import os
 
-from automindMidiConfig import *
-import automindMidiVisualizer
-from automindMidiVisualizer import gridObjectCreate, rootObjectsContainerClass
+from automindMidiVisualizer import *
 
-import pygame
 import mido
 import mido.backends.rtmidi
 import threading
 
-grids = automindMidiVisualizer.gridClass()
-
-def sysexRead():
-    while 1:
-        time.sleep(1)
-        pass
-
-sysexThread = threading.Thread(target=sysexRead)
-sysexThread.start()
-
-screenFlags = pygame.SRCALPHA
-
-screen = pygame.display.set_mode(grids.quantizedScreensize, flags=screenFlags, depth=32)
-grids.setPygameSurface(screen)
-
-globalMidiPorts = {}
-
 findPportsSamplesCount = 0
+
+rootObject = []
+rootObjectContainer = rootObjectsContainerClass(screen, clock, objects=[[grids],rootObject])
+
 MIDI_MONITOR_TITLE = "midi monitor"
 MIDI_DEVICES_LIST_TITLE = "midi devices"
+globalMidiPorts = {}
+globalMidiMonitor = {}
+globalMidiMonitor = {MIDI_MONITOR_TITLE:[textFont]}
+globalNotification = {NOTIF_TITLE:[]}
+
+TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],3))
+MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickListInteractive", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],6))
+MIDI_MONITOR_LIST_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
+DBG_OBJ_IDX = gridObjectCreate("guiBrickDropListInteractiveScrollable", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
+
 def findPorts(decimateFreq = None):
     global globalMidiPorts,findPportsSamplesCount,timeRunning
     if not decimateFreq is None:
@@ -43,29 +36,6 @@ def findPorts(decimateFreq = None):
     # print(f'{str(globalMidiPorts)}')
     findPportsSamplesCount+=1
     return globalMidiPorts
-
-globalMidiMonitor = {}
-globalMidiMonitor = {MIDI_MONITOR_TITLE:[textFont]}
-globalNotification = {NOTIF_TITLE:[]}
-
-rootObject = []
-
-TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],3))
-
-# SENSORS_IDX = gridObjectCreate("guiBrickInteractive", rootObject, screen, grids, gridBx=SENSOR_GRIDBOX, gridMapping=SENSOR_GRID_MAPPING)
-# gridObjectCreate("guiBrick",rootObject,screen,grids,(grids.gridDimensions[1] - 2))
-# TEST = gridObjectCreate("guiBrickListInteractive", rootObject, screen, grids, gridBx=(grids.gridDimensions[0]/2,4))
-# rootObject[TEST].text = 42
-# MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickDropListInteractive", rootObject, screen, grids, gridBx=(grids.gridDimensions[0],2))
-MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickListInteractive", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],6))
-# _ = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(3,6))
-
-MIDI_MONITOR_LIST_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
-DBG_OBJ_IDX = gridObjectCreate("guiBrickDropListInteractiveScrollable", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
-
-# NOTIFICATIONS_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(3)))
-
-rootObjectContainer = rootObjectsContainerClass(screen, clock, objects=[[grids],rootObject])
 
 def monitorThread():
     global globalMidiMonitor

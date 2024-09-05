@@ -1,14 +1,17 @@
-# from audioop import mul
-# from turtle import Screen
-# from matplotlib.pyplot import sca
+
 import pygame.gfxdraw
-from automindMidiConfig import *
 import pygame
-# import pygame.gfxdraw
 import math
+from automindMidiConfig import *
 
-from automindMidiConfig import MINIMUM_GRIDBOX, DEFAULT_STATUS_BOX_GRID_H
+def globalFontUpdate(fontFile, size, fontResolution=None):
+    return pygame.freetype.Font(fontFile, size)
 
+# filenames = next(walk(FONTS_PATH), (None, None, []))[2]  # [] if no file
+
+globalFont = globalFontUpdate(TEXT_FAMILY, TEXT_SIZE)
+
+clock = pygame.time.Clock()
 class rootObjectsContainerClass(object):
     def __init__(self, screen, clock, objects) -> None:
         self.screen = screen
@@ -130,6 +133,13 @@ class gridPointClass(object):
             pygame.gfxdraw.pixel(self.screen, int(self.screenCoords[0]+offset[0]/2), int(self.screenCoords[1] + offset[1]/2),self.lowpass.update((colorRandom()),0.95))
     # def lowpass():
         # lp = 
+
+grids = gridClass()
+screenFlags = pygame.SRCALPHA
+screen = pygame.display.set_mode(grids.quantizedScreensize, flags=screenFlags, depth=32)
+grids.setPygameSurface(screen)
+
+pygame.display.set_caption(APP_NAME)
 def getSequentialSensorId():
     global privateAutomindTouchSensorCounter
     privateAutomindTouchSensorCounter += 1
@@ -144,31 +154,6 @@ def calcDistance(coord1, coord2):
     diff1 = coord2[0] - coord1[0]
     diff2 = coord2[1] - coord1[1]
     return math.sqrt(pow(diff1, 2) + pow(diff2, 2))
-
-class lowpassAssymetrical(object):
-    def __init__(self) -> None:
-        self.filteredValue = [0.0,0.0,0.0]     
-    def update(self, inValue, coeffitient = 0.999):
-        distance = [1,1,1]
-        modCoeffitient = coeffitient
-        for value in range(inValue.__len__()):
-            try:
-                distance[value] = inValue[value] / self.filteredValue[value]
-            except:
-                try:
-                    distance[value] = self.filteredValue[value]/inValue[value]
-                except:
-                    pass
-                pass
-            # how far we are from target value
-            distance[value] = 1 - distance[value]
-            if distance[value] < 0:
-                distance[value] = 0
-            modCoeffitient += distance[value]/2.2
-            if modCoeffitient > 0.997:
-                modCoeffitient = 0.997
-            self.filteredValue[value] = modCoeffitient * self.filteredValue[value] + (1-modCoeffitient) * inValue[value]
-        return self.filteredValue
 
 class rootObject(object):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords, gridBox, font, colors, objType = None):
