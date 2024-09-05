@@ -11,7 +11,7 @@ pygame.init()
 ASSETS_PATH = './assets/'
 FONTS_PATH = ASSETS_PATH + 'fonts/'
 icon = pygame.image.load(f'{ASSETS_PATH}{APP_NAME_SNAKE}Icon.png')
-CONFIG_FILE_NAME = "automindAppConfig.json"
+CONFIG_FILE_NAME = f"{APP_NAME_SNAKE}Config.json"
 pygame.display.set_icon(icon)
 pygame.font.init()
 TEXT_BRIGHTNESS = 0.95
