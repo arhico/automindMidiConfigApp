@@ -237,7 +237,16 @@ class rootObject(object):
                 self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: Initialized"]
             else:
                 self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: {curName} list changed"]
+            try:
+                checkValueStillHere = list(self.text).index(self.selected[1][self.selected[0]])
+                if checkValueStillHere != -1:
+                    self.selected[0] = checkValueStillHere
+                    self.selectedPrev = self.selected.copy()
+                    print(f"Previous selection detected in changed list! {self.selected[0]}")
 
+            except:
+                print(f"Failed to reselect previous item! {self.selected[0]}")
+                self.selected[0] = None
         if selectionChanged:
             if curName in guiBricksNames:
                 self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: Initialized"]
