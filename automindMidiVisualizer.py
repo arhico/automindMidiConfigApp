@@ -231,7 +231,6 @@ class rootObject(object):
             selectionChanged = True
             self.changed = True
             self.selectedPrev = self.selected.copy()
-
         if listChanged:
             if curName in guiBricksNames:
                 self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: Initialized"]
@@ -243,7 +242,6 @@ class rootObject(object):
                     self.selected[0] = checkValueStillHere
                     self.selectedPrev = self.selected.copy()
                     print(f"Previous selection detected in changed list! {self.selected[0]}")
-
             except:
                 print(f"Failed to reselect previous item! {self.selected[0]}")
                 self.selected[0] = None
@@ -252,7 +250,6 @@ class rootObject(object):
                 self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: Initialized"]
             else:
                 self.globalText[NOTIF_TITLE]=[f"{round((time.time()-START_TIME)*1000)}: {curName} selection changed"]
-
     def updateInternalData(self):
         self.screenCoords = [self.gridTopLeftCoords[0] * self.grid.gridSize[0], self.gridTopLeftCoords[1] * self.grid.gridSize[1]]
         if self.occupiedGridPoints.__len__() == 0 and self.doesOccupyGridPoints == True:
