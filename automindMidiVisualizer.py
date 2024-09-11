@@ -527,7 +527,7 @@ class guiBrickListInteractiveScrollable(guiBrickListInteractive):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickListInteractiveScrollable") -> None:
         super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
         self.scrollable = True
-        self.activityObj['guiScrollbar'] = guiScrollbar(screen, grid=grid, gridBox=(1, gridBox[1]), gridTopLeftCoords=(gridTopLeftCoords[0],gridTopLeftCoords[1]))
+        self.activityObj['guiScrollbar'] = guiScrollbar(screen, grid=grid, gridBox=(1, gridBox[1]), gridTopLeftCoords=(gridTopLeftCoords[0]+self.gridBox[0]-1,gridTopLeftCoords[1]))
     def update(self):
         super().update()
         self.activityObj['guiScrollbar'].update()
