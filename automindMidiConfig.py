@@ -3,7 +3,7 @@ import pygame
 import pygame.freetype 
 
 NOTIF_TITLE = "automind"
-APP_VER = "0.0.1.4"
+APP_VER = "0.0.1.5"
 APP_NAME = "Automind MIDI Configurator"
 APP_NAME_SNAKE = "automindMidiApp"
 
@@ -16,13 +16,14 @@ pygame.display.set_icon(icon)
 pygame.font.init()
 TEXT_BRIGHTNESS = 0.95
 TEXT_ALPHA = 0.8
-TEXT_SIZE = int(24)
+TEXT_SIZE = int(20)
 
 configLoad(CONFIG_FILE_NAME)
 
-# TEXT_FAMILY = f'{FONTS_PATH}bedstead-condensed.otf'
+TEXT_FAMILY = f'{FONTS_PATH}bedstead-condensed.otf'
 # TEXT_FAMILY = f'{FONTS_PATH}bedstead-extracondensed.otf'
-TEXT_FAMILY = f'{FONTS_PATH}Unitblock.ttf'
+# TEXT_FAMILY = f'{FONTS_PATH}Unitblock.ttf'
+# TEXT_FAMILY = f'{FONTS_PATH}PixeloidMono-d94EV.ttf'
 PIXELS_PER_SYMBOL = TEXT_SIZE/12 * 80/12
 globalText = ["oh, hi mark"]
 
@@ -34,7 +35,7 @@ RENDER_GRID = False
 RENDER_FREE_CELLS = False
 RENDER_FREE_CELLS_PIXELS_AT_CENTER = True
 GRID_COLOR = (150,150,150,30)
-GRID_SIZE_PX_X = 30
+GRID_SIZE_PX_X = 25
 GRID_SIZE_PX_Y = GRID_SIZE_PX_X
 GRID_CELL_BORDER_PX = (2,2)
 BRICKS_OUTLINE_RADIUS_PX = 4

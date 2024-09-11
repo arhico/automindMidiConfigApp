@@ -171,9 +171,11 @@ class rootObject(object):
         self.needUpdate = True
         self.gridTopLeftCoords = gridTopLeftCoords
         self.occupiedGridPoints = []
-        self.activityObj = []
+        self.activityObj = {}
         match objType:
             case "guiLed":
+                self.doesOccupyGridPoints = False
+            case "guiScrollbar":
                 self.doesOccupyGridPoints = False
             case _:
                 self.doesOccupyGridPoints = True
@@ -205,10 +207,11 @@ class rootObject(object):
         self.hashPrevious = ""
         self.maxDropListLen = 0
         self.maxHoverCont = 0
+        self.scrollable = False
         if not self.gridTopLeftCoords is None and self.doesOccupyGridPoints:
             self.updateInternalData()
     def changesDetector(self):
-        if self.type == "guiLed":
+        if self.type == "guiLed" or self.type == "guiScrollbar":
             return
         selectionChanged = listChanged = False
         
@@ -263,6 +266,15 @@ class rootObject(object):
         self.changesDetector()
         if self.active:
             self.activeToggle = not self.activeToggle
+        # for obj in self.activityObj:
+        #     self.activityObj[obj].update()
+        # try:
+        #     self.activityObj['guiScrollbar'].update()
+        # except:
+        #     pass
+        if self.interactive:
+            self.mouseInteractionSolver()
+        
     def mouseInteractionSolver(self, receiveDataFrom = None, sendDataTo = None):
         x, y = pygame.mouse.get_pos()
         mousePressed = pygame.mouse.get_pressed()[0] or pygame.mouse.get_pressed()[2]
@@ -287,11 +299,8 @@ class rootObject(object):
                         selectionList.append(item)
                 self.selected = [self.hover, selectionList]
             # print(f'{self.type},{self.id},{self.gridTopLeftCoords},{self.screenCoords},{self.screenCenterOffsettedCoords}')          
-        if not mousePressed and x > self.screenCoords[0] + self.borderPx[0] and x < (self.screenCoords[0] + self.screenSize[0]) and y > self.screenCoords[1] + self.borderPx[1] and y < (self.screenCoords[1] + self.screenSize[1]) :
-            if not self.interactive:
-                self.hover = 0
-            else:
-                self.hover = math.floor((y - self.borderPx[1]*3 - self.screenCoords[1])/self.grid.gridSize[1])
+        if not mousePressed and x > self.screenCoords[0] + self.borderPx[0] and x < (self.screenCoords[0] + self.screenSize[0]) and y > self.screenCoords[1] + self.borderPx[1] and y < (self.screenCoords[1] + self.screenSize[1]): 
+            self.hover = math.floor((y - self.borderPx[1]*3 - self.screenCoords[1])/self.grid.gridSize[1])
             # if not sendDataTo is None:
             #     sendDataTo[0] = ""
             #     sendDataTo[0] = str(self.screenCoords)
@@ -322,7 +331,6 @@ class rootObject(object):
 
 class guiLed(rootObject):
     def __init__(self, screen, grid, gridTopLeftCoords, gridBox=MINIMUM_GRIDBOX, colors = LED_COLORS, objType="guiLed"):
-        self.doesOccupyGridPoints = False
         super().__init__(screen=screen, globalText=None, grid=grid, gridTopLeftCoords=gridTopLeftCoords, gridBox=gridBox, font=None, colors=colors, objType=objType)
         self.ledTimeoutFrames = LED_TIMEOUT_FRAMES
         self.updateInternalData()
@@ -344,10 +352,42 @@ class guiLed(rootObject):
             coeff = 0.2
         pygame.gfxdraw.box(self.screen, (self.screenCoords[0]+self.grid.borderPx[0]+BRICKS_OUTLINE_RADIUS_PX+BRICKS_OUTLINE_WIDTH_PX, self.screenCoords[1]+self.grid.borderPx[1], LED_SIZE_PX[0], LED_SIZE_PX[1]), self.lowpass.update(self.colors[clrIdx],coeff))
 
+class guiScrollbar(rootObject):
+    def __init__(self, screen, grid, gridTopLeftCoords, gridBox=MINIMUM_GRIDBOX, colors = LED_COLORS, objType="guiScrollbar"):
+        super().__init__(screen=screen, globalText=None, grid=grid, gridTopLeftCoords=gridTopLeftCoords, gridBox=gridBox, font=None, colors=colors, objType=objType)
+        # self.ledTimeoutFrames = LED_TIMEOUT_FRAMES
+        self.updateInternalData()
+        
+        # self.ledIsRound = False
+    def update(self, changed = False):
+        self.renderScrollbar(changed)
+        # if changed:
+        #     return False
+    def renderScrollbar(self, changed = False):
+        # if changed == True:
+        #     self.ledTimeoutFrames = LED_TIMEOUT_FRAMES
+        # if self.ledTimeoutFrames > 0:
+        #     self.ledTimeoutFrames-=1
+        #     clrIdx = 1
+        #     coeff = 0.01
+        # else:
+        #     clrIdx = 0
+        # #     coeff = 0.2
+        # pygame.gfxdraw.box(self.screen,
+        #                    (self.screenCoords[0]-self.grid.borderPx[0]-BRICKS_OUTLINE_RADIUS_PX-BRICKS_OUTLINE_WIDTH_PX,
+        #                     self.screenCoords[1]+self.grid.borderPx[1],
+        #                     self.gridBox[0]*self.gridSize[0],
+        #                     self.gridBox[1]*self.gridSize[1]), self.colors[0])
+        
+        
+        pygame.gfxdraw.box(self.screen, (self.screenCoords[0]+self.grid.borderPx[0]+BRICKS_OUTLINE_RADIUS_PX+BRICKS_OUTLINE_WIDTH_PX, self.screenCoords[1]+self.grid.borderPx[1]*2, LED_SIZE_PX[0], LED_SIZE_PX[1]*4), (self.colors[1]))
+
+
 class guiBrickGlobalText(rootObject):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords = None, gridBox = (20, DEFAULT_STATUS_BOX_GRID_H), objType="statusBox") -> None:
         super().__init__(screen,globalText, grid, gridTopLeftCoords, gridBox, globalFont, DEFAULT_COLORS, objType=objType)
-        self.activityObj.append(guiLed(self.screen, grid=self.grid, gridBox=(gridBox[0]/12, 1), gridTopLeftCoords=(self.gridTopLeftCoords[0],self.gridTopLeftCoords[1])))
+        self.activityObj['guiLed'] = (guiLed(self.screen, grid=self.grid, gridBox=(int(gridBox[0]/12), 1), gridTopLeftCoords=(self.gridTopLeftCoords[0],self.gridTopLeftCoords[1])))
+        # self.activityObj.append(guiScrollbar(self.screen, grid=self.grid, gridBox=(int(gridBox[0]/12), 1), gridTopLeftCoords=(self.gridTopLeftCoords[0],self.gridTopLeftCoords[1])))
     def update(self):
         self.updateInternalData()
         self.renderStatusBox(self.globalText)
@@ -383,12 +423,13 @@ class guiBrickGlobalText(rootObject):
                 scaledFillRect[2] -= 2*fillOffset[0] * 2
                 scaledFillRect[3] -= 2*fillOffset[0] * 2
                 pygame.draw.rect(self.screen,curColor,scaledFillRect, 0, border_radius=int(BRICKS_OUTLINE_RADIUS_PX*0.8))
-        self.changed = self.activityObj[0].update(self.changed)
+        self.changed = self.activityObj['guiLed'].update(self.changed)
         textHorLimit = int(self.screenSize[0]/PIXELS_PER_SYMBOL - 1)
         maxHoverCont = 0
         keyBg = None
         cnt = 0
-        if self.type != "guiBrickDropListInteractive":
+        # if self.type != "guiBrickListInteractive":
+        if 1:
             if self.gridBox[0] >= 2 and self.gridBox[1] >= 2 and not text is None:
                 if isinstance(text, dict):
                     maxHoverCont = text.keys().__len__()
@@ -422,19 +463,35 @@ class guiBrickGlobalText(rootObject):
                         cnt+=1
                     return
                 self.font.render_to(self.screen, (rectValue[0] + int(self.grid.gridSize[0]/3),rectValue[1] + int(self.grid.gridSize[1] * cnt) + int(self.grid.gridSize[1]/3)), str(self.text), colorInvert(BG_COLOR))
-        if self.type == "guiBrickDropListInteractive":
-            if isinstance(text, dict):
-                if self.text.keys().__len__():
-                    for key in self.text.keys():
-                        if not self.hover is None:
-                            if self.hover == cnt:
-                                keyBg = DEFAULT_COLORS[1]
-                        self.font.render_to(self.screen, (rectValue[0] + int(self.grid.gridSize[0]/3),rectValue[1] + int(self.grid.gridSize[1] * cnt) + int(self.grid.gridSize[1]/3)), str(self.text.keys())[:textHorLimit],fgcolor=colorInvert(BG_COLOR), bgcolor=(keyBg))
-                        cnt+=1
-                    if self.activeToggle:
-                        # Show list
-                        self.changed = True
-                        pass
+        # if self.type == "guiBrickListInteractive":
+        #     if isinstance(text, dict):
+        #         if self.text.keys().__len__():
+        #             for key in self.text.keys():
+        #                 if not self.hover is None:
+        #                     if self.hover == cnt:
+        #                         keyBg = DEFAULT_COLORS[1]
+        #                 self.font.render_to(self.screen, (rectValue[0] + int(self.grid.gridSize[0]/3),rectValue[1] + int(self.grid.gridSize[1] * cnt) + int(self.grid.gridSize[1]/3)), str(self.text.keys())[:textHorLimit],fgcolor=colorInvert(BG_COLOR), bgcolor=(keyBg))
+        #                 cnt+=1
+        #             if self.activeToggle:
+        #                 # Show list
+        #                 self.changed = True
+        #                 pass
+
+@staticmethod
+def generateFakeList():
+    with open("./assets/engWords.txt") as word_file:
+        valid_words = list(word_file.read().split())
+    key = str(random.choice(valid_words))
+    # fakeDic = {}
+    # fakeDic[key] =  [random.choice(valid_words)]
+    fakeList = []
+    iters = random.randint(0,10)
+    for x in range(iters):
+        # fakeDic[key].append(random.choice(valid_words))
+        fakeList.append(random.choice(valid_words))
+    # print(fakeDic)
+    # return fakeDic
+    return fakeList
 
 class guiBrickList(guiBrickGlobalText):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords = None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickList") -> None:
@@ -455,23 +512,25 @@ class guiBrickListInteractive(guiBrickList):
     def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickListInteractive") -> None:
         super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
         self.interactive = True
-        self.virtualListGridBounds = (self.gridBox[0],self.grid.gridDimensions[1])
-        self.maxDropListLen = self.gridBox[1] - 1
-    def update(self):
-        self.mouseInteractionSolver()
-        super().update()
 
-class guiBrickDropListInteractive(guiBrickListInteractive):
-    def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickDropListInteractive") -> None:
-        super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
-        self.maxDropListLen = self.grid.gridDimensions[1] - self.gridTopLeftCoords[1] - 1
-        self.scrollable = False
-        # print(self.maxDropListLen)
+# class guiBrickDropListInteractive(guiBrickListInteractive):
+#     def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickDropListInteractive") -> None:
+#         super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
+#         self.virtualListGridBounds = (self.gridBox[0],self.grid.gridDimensions[1])
+#         # self.maxDropListLen = self.gridBox[1] - 1
+#         self.maxDropListLen = self.grid.gridDimensions[1] - self.gridTopLeftCoords[1] - 1
+#         # self.dropListExpanded = False
+#         self.scrollable = False
+#         # print(self.maxDropListLen)
  
-class guiBrickDropListInteractiveScrollable(guiBrickDropListInteractive):
-    def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickDropListInteractiveScrollable") -> None:
+class guiBrickListInteractiveScrollable(guiBrickListInteractive):
+    def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickListInteractiveScrollable") -> None:
         super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
         self.scrollable = True
+        self.activityObj['guiScrollbar'] = guiScrollbar(screen, grid=grid, gridBox=(1, gridBox[1]), gridTopLeftCoords=(gridTopLeftCoords[0],gridTopLeftCoords[1]))
+    def update(self):
+        super().update()
+        self.activityObj['guiScrollbar'].update()
 
 # class guiBrickInteractiveFader(guiBrickInteractive):
 #     def __init__(self, screen, grid, gridTopLeftCoords=None, gridBox=FADER_GRIDBOX, objType="guiBrickInteractiveFader") -> None:
@@ -497,17 +556,17 @@ def gridObjectCreate(objectType, objectsList, screen, globalText, gridPointer, g
     #     print(f'{objectType}:{point}:{gridPointer.grid[tuple(point)].screenCoords}')
     for gridCoordinates in pointsToOccupy:
         match objectType:
-            case "guiBrickDropListInteractiveScrollable":
-                objectsList.append(guiBrickDropListInteractiveScrollable(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox))
-            case "guiBrickDropListInteractive":
-                objectsList.append(guiBrickDropListInteractive(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox))
+            case "guiBrickListInteractiveScrollable":
+                objectsList.append(guiBrickListInteractiveScrollable(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox))
+            case "guiBrickListInteractive":
+                objectsList.append(guiBrickListInteractive(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox))
                 
             case "guiBrickList":
                 objectsList.append(guiBrickList(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox))
             case "guiBrickInfo":
                 objectsList.append(guiBrickList(screen, globalText, gridPointer, gridCoordinates, gridBox=gridBox, objType="guiBrickInfo"))
-            case "guiBrickListInteractive":
-                objectsList.append(guiBrickListInteractive(screen,globalText, gridPointer, gridCoordinates, gridBox=gridBox))
+            # case "guiBrickListInteractive":
+            #     objectsList.append(guiBrickListInteractive(screen,globalText, gridPointer, gridCoordinates, gridBox=gridBox))
             case "guiBrickInteractive":
                 objectsList.append(guiBrickInteractive(screen,globalText, gridPointer, gridCoordinates, gridBox=gridBox))
             # case "guiBrickInteractiveFader":

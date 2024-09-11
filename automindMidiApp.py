@@ -21,7 +21,7 @@ globalNotification = {NOTIF_TITLE:[]}
 TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],3))
 MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickListInteractive", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],6))
 MIDI_MONITOR_LIST_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
-DBG_OBJ_IDX = gridObjectCreate("guiBrickDropListInteractiveScrollable", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
+DBG_OBJ_IDX = gridObjectCreate("guiBrickListInteractiveScrollable", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
 
 def findPorts(decimateFreq = None):
     global globalMidiPorts,findPportsSamplesCount,timeRunning
@@ -32,10 +32,25 @@ def findPorts(decimateFreq = None):
         else:
             findPportsSamplesCount = 0
     temp = mido.get_input_names()
-    globalMidiPorts[MIDI_DEVICES_LIST_TITLE] = temp
+    globalMidiPorts[MIDI_DEVICES_LIST_TITLE] = generateFakeList()
+    globalMidiPorts[MIDI_DEVICES_LIST_TITLE] += temp
+    
     # print(f'{str(globalMidiPorts)}')
     findPportsSamplesCount+=1
     return globalMidiPorts
+
+def updateFakeData():
+    while 1:
+        global globalMidiMonitor, globalMidiPorts
+        # globalMidiMonitor =  generateFakeDic()
+        try:
+            # globalMidiPorts[MIDI_DEVICES_LIST_TITLE].append(list(generateFakeDic()))
+            time.sleep(4)
+        except:
+            pass
+
+fakeDataThread = threading.Thread(target=updateFakeData)
+fakeDataThread.start()
 
 def monitorThread():
     global globalMidiMonitor
@@ -74,11 +89,13 @@ def monitorThread():
 # midiMonitorThread = threading.Thread(target=monitorThread)
 # midiMonitorThread.start()
 
+DECIMATOR = FRAMERATE*2
 cnt = 0
 
+findPorts()
 while 1:
     try:
-        findPorts(FRAMERATE/5)
+        findPorts(DECIMATOR)
         if not rootObject[TITLE_OBJ_IDX].changed and not cnt % (LED_TIMEOUT_FRAMES * 2):
             rootObject[TITLE_OBJ_IDX].changed = True
             timeRunning = int((time.time()-START_TIME)*1000)
