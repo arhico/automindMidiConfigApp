@@ -20,8 +20,11 @@ globalNotification = {NOTIF_TITLE:[]}
 
 TITLE_OBJ_IDX = gridObjectCreate("guiBrickInfo", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],3))
 MIDI_DEVICES_LIST_OBJ_IDX = gridObjectCreate("guiBrickListInteractive", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],6))
-MIDI_MONITOR_LIST_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
-DBG_OBJ_IDX = gridObjectCreate("guiBrickListInteractiveScrollable", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
+MIDI_MONITOR_LIST_OBJ_IDX = gridObjectCreate("guiBrickList", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0]/2,int(8)))
+# DBG_OBJ_IDX = gridObjectCreate("guiBrickListInteractiveScrollable", rootObject, screen, globalNotification, grids, gridBx=(grids.gridDimensions[0],int(6)))
+# FADER = gridObjectCreate("guiBrickInteractiveFader", rootObject, screen, globalNotification, grids)
+
+
 
 def findPorts(decimateFreq = None):
     global globalMidiPorts,findPportsSamplesCount,timeRunning
@@ -39,18 +42,18 @@ def findPorts(decimateFreq = None):
     findPportsSamplesCount+=1
     return globalMidiPorts
 
-def updateFakeData():
-    while 1:
-        global globalMidiMonitor, globalMidiPorts
-        # globalMidiMonitor =  generateFakeDic()
-        try:
-            # globalMidiPorts[MIDI_DEVICES_LIST_TITLE].append(list(generateFakeDic()))
-            time.sleep(4)
-        except:
-            pass
+# def updateFakeData():
+#     while 1:
+#         global globalMidiMonitor, globalMidiPorts
+#         # globalMidiMonitor =  generateFakeDic()
+#         try:
+#             # globalMidiPorts[MIDI_DEVICES_LIST_TITLE].append(list(generateFakeDic()))
+#             time.sleep(4)
+#         except:
+#             pass
 
-fakeDataThread = threading.Thread(target=updateFakeData)
-fakeDataThread.start()
+# fakeDataThread = threading.Thread(target=updateFakeData)
+# fakeDataThread.start()
 
 def monitorThread():
     global globalMidiMonitor
@@ -79,15 +82,16 @@ def monitorThread():
         if currentSelection >= 1:
             if rootObject[MIDI_DEVICES_LIST_OBJ_IDX].selected[1][currentSelection-1] in rootObject[MIDI_DEVICES_LIST_OBJ_IDX].selected[1]:
                 for msg in inport.iter_pending():
+                # for msg in generateFakeList():
                     # print(msg)
-                    if globalMidiMonitor[MIDI_MONITOR_TITLE].__len__() >= rootObject[MIDI_MONITOR_LIST_OBJ_IDX].gridBox[1]-2:
+                    if globalMidiMonitor[MIDI_MONITOR_TITLE].__len__() >= rootObject[MIDI_MONITOR_LIST_OBJ_IDX].maxDropListLen:
                         globalMidiMonitor[MIDI_MONITOR_TITLE].reverse()
                         globalMidiMonitor[MIDI_MONITOR_TITLE].pop(0)
                     globalMidiMonitor[MIDI_MONITOR_TITLE].append(str(msg))
                     globalMidiMonitor[MIDI_MONITOR_TITLE].reverse()
 
-# midiMonitorThread = threading.Thread(target=monitorThread)
-# midiMonitorThread.start()
+midiMonitorThread = threading.Thread(target=monitorThread)
+midiMonitorThread.start()
 
 DECIMATOR = FRAMERATE*2
 cnt = 0
@@ -104,7 +108,8 @@ while 1:
         modNotif = {str(NOTIF_TITLE+' '+str(timeRunning)):globalNotification[NOTIF_TITLE]}
         rootObject[TITLE_OBJ_IDX].text = modNotif
         rootObject[MIDI_DEVICES_LIST_OBJ_IDX].text = globalMidiPorts
-        rootObject[MIDI_MONITOR_LIST_OBJ_IDX].text =  globalMidiMonitor        
+        # globalMidiMonitor = generateFakeList().copy()
+        rootObject[MIDI_MONITOR_LIST_OBJ_IDX].text =  globalMidiMonitor
         # rootObject[DBG_OBJ_IDX].text =  timeRunning
         # rootObject[NOTIFICATIONS_OBJ_IDX].text = globalNotification
         screen.fill(BG_COLOR)

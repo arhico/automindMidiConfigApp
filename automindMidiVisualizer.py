@@ -3,6 +3,7 @@ import pygame.gfxdraw
 import pygame
 import math
 from automindMidiConfig import *
+from automindMidiConfig import MINIMUM_GRIDBOX
 
 def globalFontUpdate(fontFile, size, fontResolution=None):
     return pygame.freetype.Font(fontFile, size)
@@ -353,7 +354,7 @@ class guiLed(rootObject):
         pygame.gfxdraw.box(self.screen, (self.screenCoords[0]+self.grid.borderPx[0]+BRICKS_OUTLINE_RADIUS_PX+BRICKS_OUTLINE_WIDTH_PX, self.screenCoords[1]+self.grid.borderPx[1], LED_SIZE_PX[0], LED_SIZE_PX[1]), self.lowpass.update(self.colors[clrIdx],coeff))
 
 class guiScrollbar(rootObject):
-    def __init__(self, screen, grid, gridTopLeftCoords, gridBox=MINIMUM_GRIDBOX, colors = LED_COLORS, objType="guiScrollbar"):
+    def __init__(self, screen, grid, gridTopLeftCoords, gridBox=MINIMUM_GRIDBOX, colors = SENSOR_COLOR, objType="guiScrollbar"):
         super().__init__(screen=screen, globalText=None, grid=grid, gridTopLeftCoords=gridTopLeftCoords, gridBox=gridBox, font=None, colors=colors, objType=objType)
         # self.ledTimeoutFrames = LED_TIMEOUT_FRAMES
         self.updateInternalData()
@@ -523,7 +524,7 @@ class guiBrickListInteractive(guiBrickList):
 #         self.scrollable = False
 #         # print(self.maxDropListLen)
  
-class guiBrickListInteractiveScrollable(guiBrickListInteractive):
+class guiBrickListInteractiveScrollable(guiBrickListInteractive): # FIXME don't scroll, just inserted scrollbar
     def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickListInteractiveScrollable") -> None:
         super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
         self.scrollable = True
@@ -532,15 +533,19 @@ class guiBrickListInteractiveScrollable(guiBrickListInteractive):
         super().update()
         self.activityObj['guiScrollbar'].update()
 
+class guiBrickInteractiveFader(guiBrickListInteractive):
+    def __init__(self, screen, globalText, grid, gridTopLeftCoords=None, gridBox=MINIMUM_GRIDBOX, objType="guiBrickListInteractive") -> None:
+        super().__init__(screen, globalText, grid, gridTopLeftCoords, gridBox, objType)
+
 # class guiBrickInteractiveFader(guiBrickInteractive):
 #     def __init__(self, screen, grid, gridTopLeftCoords=None, gridBox=FADER_GRIDBOX, objType="guiBrickInteractiveFader") -> None:
 #         super().__init__(screen, grid, gridTopLeftCoords, gridBox, objType)
 #         # self.colors = [DEFAULT_SENSOR_COLOR]
-#     def update(self):
-#         self.mouseInteractionSolver(receiveDataFrom=None,sendDataTo=self.globalText)
-#         self.updateInternalData()
-#         self.computeActiveIncrement()
-#         self.renderStatusBox(self.value, 0.2)
+    # def update(self):
+    #     self.mouseInteractionSolver(receiveDataFrom=None,sendDataTo=self.globalText)
+    #     self.updateInternalData()
+    #     self.computeActiveIncrement()
+    #     self.renderStatusBox(self.value, 0.2)
 
 def gridObjectCreate(objectType, objectsList, screen, globalText, gridPointer, gridBx = (None, None), gridMapping = None):
     if not gridBx[0] is None and not gridBx[1] is None:
@@ -569,8 +574,8 @@ def gridObjectCreate(objectType, objectsList, screen, globalText, gridPointer, g
             #     objectsList.append(guiBrickListInteractive(screen,globalText, gridPointer, gridCoordinates, gridBox=gridBox))
             case "guiBrickInteractive":
                 objectsList.append(guiBrickInteractive(screen,globalText, gridPointer, gridCoordinates, gridBox=gridBox))
-            # case "guiBrickInteractiveFader":
-            #     objectsList.append(guiBrickInteractiveFader(screen, gridPointer, gridCoordinates, gridBox=gridBx))
+            case "guiBrickInteractiveFader":
+                objectsList.append(guiBrickInteractiveFader(screen, gridPointer, gridCoordinates, gridBox=gridBx))
             case "statusBox":
                 objectsList.append(guiBrickGlobalText(screen,globalText, gridPointer, gridCoordinates, gridBox=gridBox))
             case _:
